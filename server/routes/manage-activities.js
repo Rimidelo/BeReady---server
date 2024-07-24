@@ -10,11 +10,11 @@ const {
 
 const activitiesRouter = new Router();
 
-activitiesRouter.get('/', getAllActivities);
-activitiesRouter.get('/:id', getActivity);
-activitiesRouter.post('/', createActivity);
-activitiesRouter.put('/:id', editActivity);
-activitiesRouter.delete('/:id', deleteActivity);
-activitiesRouter.post('/schedule/:id', scheduleActivity);
+activitiesRouter.get('getAllActivities/', getAllActivities);
+activitiesRouter.get('getActivity/:id', getActivity);
+activitiesRouter.post('createActivity/', createActivity);
+activitiesRouter.put('editActivity/:id', editActivity);
+activitiesRouter.delete('deleteActivity/:id', deleteActivity);
+activitiesRouter.post('scheduleActivity/:id', scheduleActivity);
 
 module.exports = { activitiesRouter };

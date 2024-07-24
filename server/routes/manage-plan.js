@@ -1,16 +1,17 @@
 const { Router } = require('express');
 const {
-    getPlan,
-    createPlan,
-    editPlan,
-    editActivity,
-    deleteActivity,
-    scheduleActivity
+    addActivityToPlan,
+    removeActivityFromPlan,
+    addJobToPlan,
+    removeJobFromPlan,
+    getPlan
 } = require('../controllers/plans-controller');
 
 const plansRouter = new Router();
 
-plansRouter.get('/:id', getPlan);
-plansRouter.post('/', createPlan);
-plansRouter.put('/:id', editPlan);
+plansRouter.post('addActivityToPlan/:userid', addActivityToPlan);
+plansRouter.delete('removeActivityFromPlan/:userid', removeActivityFromPlan);
+plansRouter.post('addJobToPlan/:userid', addJobToPlan);
+plansRouter.delete('removeJobFromPlan/:userid', removeJobFromPlan);
+plansRouter.get('getPlan/:userid', getPlan);
 module.exports = { plansRouter };

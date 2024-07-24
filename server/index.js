@@ -24,6 +24,12 @@ app.get('/', (req, res) => {
 const { manageActivitiesRouter } = require('./routes/manage-activities');
 app.use('/activities', manageActivitiesRouter);
 
+const { profileRouter } = require('./routes/profile-router');
+app.use('/profile', profileRouter);
+
+const { plansRouter } = require('./routes/manage-plan');
+app.use('/plan', plansRouter);
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something is broken!');
