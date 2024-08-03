@@ -1,8 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const { dbConnection } = require('./db_connection');
-
-
 const app = express();
 const port = process.env.PORT || 8081;
 
