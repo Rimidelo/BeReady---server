@@ -1,12 +1,12 @@
-const { Router } = require('express');
-const {
+import { Router } from 'express';
+import {
     getAllActivities,
     getActivity,
     createActivity,
     editActivity,
     deleteActivity,
     scheduleActivity
-} = require('../controllers/activities-controller');
+} from '../controllers/activities-controller.js';
 
 const activitiesRouter = new Router();
 
@@ -17,4 +17,4 @@ activitiesRouter.put('editActivity/:id', editActivity);
 activitiesRouter.delete('deleteActivity/:id', deleteActivity);
 activitiesRouter.post('scheduleActivity/:id', scheduleActivity);
 
-module.exports = { activitiesRouter };
+export { activitiesRouter };

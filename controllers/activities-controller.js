@@ -1,7 +1,7 @@
-const { dbConnection } = require('../db/db_connection');
-const { formatActivity } = require('../utils/format');
+import { dbConnection } from '../db_connection.js';
+import { formatActivity } from '../utils/activity-format.js';
 
-exports.getAllActivities = async (req, res) => {
+export const getAllActivities = async (req, res) => {
     const connection = await dbConnection.createConnection();
     const [rows] = await connection.execute(`
         SELECT
@@ -27,7 +27,7 @@ exports.getAllActivities = async (req, res) => {
     res.json(formattedRows);
 };
 
-exports.getActivity = async (req, res) => {
+export const getActivity = async (req, res) => {
     const { id } = req.params;
     const connection = await dbConnection.createConnection();
     const [rows] = await connection.execute(`
@@ -58,7 +58,7 @@ exports.getActivity = async (req, res) => {
     }
 };
 
-exports.createActivity = async (req, res) => {
+export const createActivity = async (req, res) => {
     const { ActivityID, Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit } = req.body;
     const connection = await dbConnection.createConnection();
     await connection.execute(
@@ -69,7 +69,7 @@ exports.createActivity = async (req, res) => {
     res.status(201).json({ message: 'Activity created' });
 };
 
-exports.editActivity = async (req, res) => {
+export const editActivity = async (req, res) => {
     const { id } = req.params;
     const { Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit } = req.body;
     const connection = await dbConnection.createConnection();
@@ -81,7 +81,7 @@ exports.editActivity = async (req, res) => {
     res.json({ message: 'Activity updated' });
 };
 
-exports.deleteActivity = async (req, res) => {
+export const deleteActivity = async (req, res) => {
     const { id } = req.params;
     const connection = await dbConnection.createConnection();
     await connection.execute('DELETE FROM tbl_110_Activities WHERE ActivityID = ?', [id]);
@@ -89,7 +89,7 @@ exports.deleteActivity = async (req, res) => {
     res.json({ message: 'Activity deleted' });
 };
 
-exports.scheduleActivity = async (req, res) => {
+export const scheduleActivity = async (req, res) => {
     const { id } = req.params;
     const { ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency } = req.body;
     const connection = await dbConnection.createConnection();

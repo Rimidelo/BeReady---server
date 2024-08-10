@@ -1,5 +1,6 @@
-const mysql = require('mysql2/promise');
-exports.dbConnection = {
+import mysql from 'mysql2/promise';
+
+export const dbConnection = {
     async createConnection() {
         const connection = await mysql.createConnection({
             host: process.env.DB_HOST,
@@ -10,4 +11,4 @@ exports.dbConnection = {
 
         return connection;
     }
-}
+};

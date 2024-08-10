@@ -1,41 +1,45 @@
-require('dotenv').config();
-const express = require('express');
+import { config } from "dotenv";
+import express, { json, urlencoded } from "express";
+config();
 const app = express();
 const port = process.env.PORT || 8081;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.set('Access-Control-Allow-Methods', "GET, POST, PUT, DELETE");
-    res.set('Content-Type', 'application/json');
-    next();
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.set("Content-Type", "application/json");
+  next();
 });
 
-app.get('/', (req, res) => {
-    res.send('This is BeReady App');
+app.get("/", (req, res) => {
+  res.send("This is BeReady App");
 });
 
-const { manageActivitiesRouter } = require('./routes/manage-activities');
-app.use('/activities', manageActivitiesRouter);
+import { activitiesRouter } from "./routes/manage-activities.js";
+app.use("/activities", activitiesRouter);
 
-const { profileRouter } = require('./routes/profile-router');
-app.use('/profile', profileRouter);
+import { profileRouter } from "./routes/profile.js";
+app.use("/profile", profileRouter);
 
-const { plansRouter } = require('./routes/manage-plan');
-app.use('/plan', plansRouter);
+import { plansRouter } from "./routes/manage-plan.js";
+app.use("/plan", plansRouter);
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something is broken!');
+  console.error(err.stack);
+  res.status(500).send("Something is broken!");
 });
 
 app.use((req, res) => {
-    res.status(404).send('Route not found');
+  res.status(404).send("Route not found");
 });
 
 app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
+  console.log(`Listening on port ${port}`);
 });

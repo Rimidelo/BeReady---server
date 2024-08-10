@@ -1,4 +1,4 @@
-const formatActivity = (row) => ({
+export const formatActivity = (row) => ({
     id: row.id,
     type: row.type,
     name: row.name,
@@ -21,5 +21,3 @@ const formatActivity = (row) => ({
         }
     }
 });
-
-module.exports = { formatActivity };

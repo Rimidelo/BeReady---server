@@ -1,11 +1,11 @@
-const { Router } = require('express');
-const {
+import { Router } from 'express';
+import {
     addActivityToPlan,
     removeActivityFromPlan,
     addJobToPlan,
     removeJobFromPlan,
     getPlan
-} = require('../controllers/plans-controller');
+} from '../controllers/plans-controller.js';
 
 const plansRouter = new Router();
 
@@ -14,4 +14,5 @@ plansRouter.delete('removeActivityFromPlan/:userid', removeActivityFromPlan);
 plansRouter.post('addJobToPlan/:userid', addJobToPlan);
 plansRouter.delete('removeJobFromPlan/:userid', removeJobFromPlan);
 plansRouter.get('getPlan/:userid', getPlan);
-module.exports = { plansRouter };
+
+export { plansRouter };
