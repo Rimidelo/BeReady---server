@@ -34,6 +34,37 @@ export const getFirstOrderDetails = async (req, res) => {
   res.json(firstOrderDetails);
 };
 
+const handleNotSuitableJob = async (jobId) => {
+  const connection = await dbConnection.createConnection();
+  await connection.execute(
+    `delete from tbl_110_UserJobs
+     where JobID = ${jobId};`
+  );
+  connection.end();
+};
+
+const assessSuitability = async (userId, firstOrderDetails) => {
+  const isSuitabilityChanged = false;
+  const connection = await dbConnection.createConnection();
+  const [userJobs] = await connection.execute(
+    `select jr.* from tbl_110_UserJobs as uj
+     inner join tbl_110_JobRequirements as jr on uj.JobID = jr.JobID 
+     where uj.UserID = ${userId};`
+  );
+  connection.end();
+  userJobs.forEach((job) => {
+    const isSuitableJob = Object.entries(job).every(
+      ([name, value]) =>
+        name == "JobID" || value == null || firstOrderDetails[name] >= value
+    );
+    if (!isSuitableJob) {
+      handleNotSuitableJob(job.JobID);
+      isSuitabilityChanged = true;
+    }
+  });
+  return isSuitabilityChanged;
+};
+
 export const setFirstOrderDetails = async (req, res) => {
   const { userId } = req.params;
   const connection = await dbConnection.createConnection();
@@ -42,6 +73,7 @@ export const setFirstOrderDetails = async (req, res) => {
      VALUES (${1}) ON DUPLICATE KEY UPDATE UserID = ${userId}`
   );
   connection.end();
-  // assessSuitability(userId);
+  const isSuitabilityChanged = assessSuitability(userId, firstOrderDetails);
+  res.status(200).json(`{ isSuitabilityChanged: ${isSuitabilityChanged} }`);
   console.log(req);
 };
