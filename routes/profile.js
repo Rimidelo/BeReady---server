@@ -1,9 +1,6 @@
 import { Router } from "express";
 import {
-  //   getProfile,
-  //   createProfile,
-  //   editProfile,
-  //   deleteProfile,
+  getProfile,
   getFirstOrderDetails,
   getProfileImage,
   getProfileStatus,
@@ -11,10 +8,8 @@ import {
 } from "../controllers/profile-controller.js";
 const profileRouter = new Router();
 
-// profileRouter.get("/:id", getProfile);
-// profileRouter.post("/", createProfile);
-// profileRouter.put("/:id", editProfile);
-// profileRouter.delete("/:id", deleteProfile);
+profileRouter.get("getProfile/:userId", getProfile);
+profileRouter.get("login", getProfile);
 profileRouter.get("getProfileStatus/:userId", getProfileStatus);
 profileRouter.get("getProfileImage/:userId", getProfileImage);
 profileRouter.get("getFirstOrderDetails/:userId", getFirstOrderDetails);

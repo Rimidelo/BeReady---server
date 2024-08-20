@@ -1,13 +1,13 @@
 import { Router } from "express";
-import {} from "../controllers/plans-controller.js";
+import {
+  addRecord,
+  setRecord,
+  deleteRecord,
+} from "../controllers/plans-controller.js";
 
 const trackRouter = new Router();
 
-trackRouter.post("addActivityToPlan/:userid", addActivityToPlan);
-trackRouter.delete("removeActivityFromPlan/:userid", removeActivityFromPlan);
-trackRouter.post("addJobToPlan/:userid", addJobToPlan);
-trackRouter.delete("removeJobFromPlan/:userid", removeJobFromPlan);
-trackRouter.get("getPlan/:userid", getPlan);
+trackRouter.post("addRecord/:userid", addRecord);
+trackRouter.post("setRecord/:userid", setRecord);
+trackRouter.delete("deleteRecord/:userid", deleteRecord);
 export { trackRouter };
-
-//not finishedddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd

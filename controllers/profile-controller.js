@@ -1,5 +1,9 @@
 import { dbConnection } from "../db_connection.js";
 
+export const getProfile = async (req, res) => {
+  //TODO
+};
+
 export const getProfileStatus = async (req, res) => {
   const { userId } = req.params;
   const connection = await dbConnection.createConnection();
