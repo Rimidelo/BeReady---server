@@ -1,7 +1,14 @@
 import { dbConnection } from "../db_connection.js";
 
 export const getProfile = async (req, res) => {
-  //TODO
+  const { userId } = req.params;
+  const connection = await dbConnection.createConnection();
+  const [userProfile] = await connection.execute(
+    `select * from tbl_110_User
+     where UserID = ${userId};`
+  );
+  connection.end();
+  res.json(userProfile);
 };
 
 export const getProfileStatus = async (req, res) => {
