@@ -9,11 +9,11 @@ import {
 
 const profileRouter = new Router();
 
-profileRouter.get("/getProfile/:userId", getProfile);
+profileRouter.get("/getProfile/:userID", getProfile);
 profileRouter.post("/login", getProfile);
-profileRouter.get("/getProfileStatus/:userId", getProfileStatus);
-profileRouter.get("/getProfileImage/:userId", getProfileImage);
-profileRouter.get("/getFirstOrderDetails/:userId", getFirstOrderDetails);
-profileRouter.post("/setFirstOrderDetails/:userId", setFirstOrderDetails);
+profileRouter.get("/getProfileStatus/:userID", getProfileStatus);
+profileRouter.get("/getProfileImage/:userID", getProfileImage);
+profileRouter.get("/getFirstOrderDetails/:userID", getFirstOrderDetails);
+profileRouter.post("/setFirstOrderDetails/:userID", setFirstOrderDetails);
 
 export { profileRouter };

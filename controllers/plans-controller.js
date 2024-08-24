@@ -1,7 +1,7 @@
 import { dbConnection } from "../db_connection.js";
 
 export const getPlan = async (req, res) => {
-  const { userId } = req.params;
+  const { userID } = req.params;
   const connection = await dbConnection.createConnection();
   const [userJobs] = await connection.execute(
     `select 
@@ -11,7 +11,7 @@ export const getPlan = async (req, res) => {
      from tbl_110_UserJobs as uj
      inner join tbl_110_Jobs as j
      on uj.JobID = j.JobID
-     where uj.UserID = ${userId};`
+     where uj.UserID = ${userID};`
   );
   const [userActivities] = await connection.execute(
     `select 
@@ -21,20 +21,20 @@ export const getPlan = async (req, res) => {
      from tbl_110_UserActivities as ua
      inner join tbl_110_Activities as a 
      on ua.ActivityID = a.ActivityID
-     where ua.UserID = ${userId};`
+     where ua.UserID = ${userID};`
   );
   connection.end();
   const jobs = userJobs.map((job) => ({
     ...job,
     activities: userActivities.filter((activity) =>
-      job.Characteristics.includes(activity.Type)
+      job.Characteristics.includes(activity.type)
     ),
   }));
   res.json({ jobs });
 };
 
 export const getUserActivity = async (req, res) => {
-  const { userId, activityId } = req.params;
+  const { userID, activityID } = req.params;
   const connection = await dbConnection.createConnection();
   const [activityDetails] = await connection.execute(
     `select
@@ -43,14 +43,14 @@ export const getUserActivity = async (req, res) => {
         TargetValue as targetValue,
         TargetUnit as targetUnit
      from tbl_110_Activities
-     where ActivityID = ${activityId};`
+     where ActivityID = ${activityID};`
   );
   const [userRecords] = await connection.execute(
     `select 
         DATE_FORMAT(recordDate, '%d/%m/%Y') as date,
         Records as result
      from tbl_110_UserActivityRecords
-     where UserID = ${userId} and ActivityID = ${activityId};`
+     where UserID = ${userID} and ActivityID = ${activityID};`
   );
   connection.end();
 

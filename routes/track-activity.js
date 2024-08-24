@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  addRecord,
   setRecord,
   deleteRecord,
 } from "../controllers/plans-controller.js";
