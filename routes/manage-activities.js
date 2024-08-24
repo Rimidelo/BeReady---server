@@ -12,7 +12,7 @@ import {
 const activitiesRouter = new Router();
 
 activitiesRouter.get('getAllActivities/', getAllActivities);
-activitiesRouter.get('getActivitiesByInstitute/:instituteId', getActivitiesByInstitute);
+activitiesRouter.get('/getActivitiesByInstitute/:instituteId', getActivitiesByInstitute);
 activitiesRouter.get('getActivity/:id', getActivity);
 activitiesRouter.post('createActivity/', createActivity);
 activitiesRouter.put('editActivity/:id', editActivity);

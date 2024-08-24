@@ -1,23 +1,26 @@
+import { format } from 'date-fns';
 export const formatActivity = (row) => ({
-    id: row.id,
-    type: row.type,
-    name: row.name,
-    frameworkType: row.frameworkType,
-    company_id: row.company_id,
+    id: row.ActivityID,
+    type: row.Type,
+    name: row.Name,
+    frameworkType: row.FrameworkType,
+    instituteID: row.InstituteID,
     target: {
-        value: row.targetValue,
-        unit: row.targetUnit
+        value: row.TargetValue,
+        unit: row.TargetUnit
     },
     scheduledAttributes: {
         participants: {
-            actualAmount: row.actualAmount,
-            maxAmount: row.maxAmount
+            actualAmount: row.ParticipantsActual,
+            maxAmount: row.ParticipantsMax
         },
         schedule: {
-            date: row.scheduleDate,
-            day: row.scheduleDay,
-            hours: row.scheduleHours,
-            repeat: row.repeatFrequency
+            date: row.ScheduleDate,
+            day: row.ScheduleDay,
+            hours: `${row.StartTime} - ${row.EndTime}`,
+            repeat: row.RepeatFrequency,
+            startTime: row.StartTime,
+            endTime: row.EndTime
         }
     }
 });
