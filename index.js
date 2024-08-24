@@ -21,7 +21,7 @@ import { profileRouter } from "./routes/profile.js";
 app.use("/profile", profileRouter);
 
 import { plansRouter } from "./routes/manage-plan.js";
-app.use("/plan", plansRouter);
+app.use("/managePlan", plansRouter);
 
 import { trackRouter } from "./routes/track-activity.js";
 app.use("/userActivityRecords", trackRouter);

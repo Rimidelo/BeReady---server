@@ -33,11 +33,6 @@ export const getPlan = async (req, res) => {
   res.json({ jobs });
 };
 
-export const setPlan = (req, res) => {
-  //TODO
-  console.log(req);
-};
-
 export const getUserActivity = async (req, res) => {
   const { userId, activityId } = req.params;
   const connection = await dbConnection.createConnection();
