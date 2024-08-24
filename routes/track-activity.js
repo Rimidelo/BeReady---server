@@ -7,7 +7,7 @@ import {
 
 const trackRouter = new Router();
 
-trackRouter.post("addRecord/:userid", addRecord);
-trackRouter.post("setRecord/:userid", setRecord);
-trackRouter.delete("deleteRecord/:userid", deleteRecord);
+trackRouter.post("/addRecord/:userID", addRecord);
+trackRouter.post("/setRecord/:userID", setRecord);
+trackRouter.delete("/deleteRecord/:userID", deleteRecord);
 export { trackRouter };
