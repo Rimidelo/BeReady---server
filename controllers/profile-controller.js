@@ -15,8 +15,6 @@ export const getProfile = async (req, res) => {
   }
 };
 
-
-
 export const getProfileStatus = async (req, res) => {
   const { userID } = req.params;
   const connection = await dbConnection.createConnection();
@@ -83,12 +81,47 @@ const assessSuitability = async (userID, firstOrderDetails) => {
 };
 
 export const setFirstOrderDetails = async (req, res) => {
-  const { userID } = req.params;
+  const {
+    userID,
+    IPR,
+    adaptionDiff,
+    command,
+    field,
+    frameBehave,
+    humanRelations,
+    informProc,
+    instruction,
+    investAndPersist,
+    manageAndOrg,
+    medicalProfile,
+    spatialPer,
+    sustainAttention,
+    teamwork,
+    technicalAct,
+  } = req.params;
   const connection = await dbConnection.createConnection();
   const [firstOrderDetails] = await connection.execute(
     `INSERT INTO tbl_110_CFMS_First_Order 
-     VALUES (${1}) 
-     ON DUPLICATE KEY UPDATE UserID = ${userID}`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+     ON DUPLICATE KEY UPDATE UserID = ${userID}`,
+    [
+      userID,
+      IPR,
+      adaptionDiff,
+      command,
+      field,
+      frameBehave,
+      humanRelations,
+      informProc,
+      instruction,
+      investAndPersist,
+      manageAndOrg,
+      medicalProfile,
+      spatialPer,
+      sustainAttention,
+      teamwork,
+      technicalAct,
+    ]
   );
   connection.end();
   const isSuitabilityChanged = assessSuitability(userID, firstOrderDetails);
