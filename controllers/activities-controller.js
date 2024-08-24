@@ -2,6 +2,7 @@ import { dbConnection } from '../db_connection.js';
 import { formatActivity } from '../utils/activity-format.js';
 
 export const getAllActivities = async (req, res) => {
+    console.log('getAllActivities');
     const connection = await dbConnection.createConnection();
     const [rows] = await connection.execute(`
         SELECT

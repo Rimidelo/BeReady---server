@@ -11,6 +11,7 @@ import {
 const activitiesRouter = new Router();
 
 activitiesRouter.get('getAllActivities/', getAllActivities);
+
 activitiesRouter.get('getActivity/:id', getActivity);
 activitiesRouter.post('createActivity/', createActivity);
 activitiesRouter.put('editActivity/:id', editActivity);
