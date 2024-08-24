@@ -16,7 +16,7 @@ activitiesRouter.get('/getActivitiesByInstitute/:instituteID', getActivitiesByIn
 activitiesRouter.get('/getActivity/:id', getActivity);
 activitiesRouter.post('/createActivity/', createActivity);
 activitiesRouter.put('/editActivity/:activityID', editActivity);
-activitiesRouter.delete('/deleteActivity/:activityID', deleteActivity);
+activitiesRouter.delete('/deleteActivity/:id', deleteActivity);
 activitiesRouter.post('/scheduleActivity/:activityID', scheduleActivity);
 
 export { activitiesRouter };
