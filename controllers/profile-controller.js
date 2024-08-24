@@ -18,16 +18,16 @@ export const getProfile = async (req, res) => {
 
 
 export const getProfileStatus = async (req, res) => {
-  const { userId } = req.params;
+  const { userID } = req.params;
   const connection = await dbConnection.createConnection();
   const [isUserExist] = await connection.execute(
-    `select 1 from tbl_110_User where UserID=${userId}`
+    `select 1 from tbl_110_User where UserID=${userID}`
   );
   const [hasPreferences] = await connection.execute(
-    `select 1 from tbl_110_CFMS_Preferences where UserID=${userId}`
+    `select 1 from tbl_110_CFMS_Preferences where UserID=${userID}`
   );
   const [hasFirstOrderDetails] = await connection.execute(
-    `select 1 from tbl_110_CFMS_First_Order where UserID=${userId}`
+    `select 1 from tbl_110_CFMS_First_Order where UserID=${userID}`
   );
   connection.end();
   res.json({
@@ -42,10 +42,10 @@ export const getProfileImage = (req, res) => {
 };
 
 export const getFirstOrderDetails = async (req, res) => {
-  const { userId } = req.params;
+  const { userID } = req.params;
   const connection = await dbConnection.createConnection();
   const [firstOrderDetails] = await connection.execute(
-    `select * from tbl_110_CFMS_First_Order where UserID=${userId}`
+    `select * from tbl_110_CFMS_First_Order where UserID=${userID}`
   );
   connection.end();
   res.json(firstOrderDetails);
@@ -60,13 +60,13 @@ const handleNotSuitableJob = async (jobId) => {
   connection.end();
 };
 
-const assessSuitability = async (userId, firstOrderDetails) => {
+const assessSuitability = async (userID, firstOrderDetails) => {
   const isSuitabilityChanged = false;
   const connection = await dbConnection.createConnection();
   const [userJobs] = await connection.execute(
     `select jr.* from tbl_110_UserJobs as uj
      inner join tbl_110_JobRequirements as jr on uj.JobID = jr.JobID 
-     where uj.UserID = ${userId};`
+     where uj.UserID = ${userID};`
   );
   connection.end();
   userJobs.forEach((job) => {
@@ -83,14 +83,14 @@ const assessSuitability = async (userId, firstOrderDetails) => {
 };
 
 export const setFirstOrderDetails = async (req, res) => {
-  const { userId } = req.params;
+  const { userID } = req.params;
   const connection = await dbConnection.createConnection();
   const [firstOrderDetails] = await connection.execute(
     `INSERT INTO tbl_110_CFMS_First_Order 
-     VALUES (${1}) ON DUPLICATE KEY UPDATE UserID = ${userId}`
+     VALUES (${1}) 
+     ON DUPLICATE KEY UPDATE UserID = ${userID}`
   );
   connection.end();
-  const isSuitabilityChanged = assessSuitability(userId, firstOrderDetails);
+  const isSuitabilityChanged = assessSuitability(userID, firstOrderDetails);
   res.status(200).json(`{ isSuitabilityChanged: ${isSuitabilityChanged} }`);
-  console.log(req);
 };

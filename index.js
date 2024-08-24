@@ -14,19 +14,17 @@ app.get("/", (req, res) => {
   res.send("This is BeReady App");
 });
 
-app.use('/assets', express.static('assets'));
-
 import { activitiesRouter } from "./routes/manage-activities.js";
 app.use("/activities", activitiesRouter);
 
 import { profileRouter } from "./routes/profile.js";
 app.use("/profile", profileRouter);
 
-// import { plansRouter } from "./routes/manage-plan.js";
-// app.use("/managePlan", plansRouter);
+import { plansRouter } from "./routes/manage-plan.js";
+app.use("/managePlan", plansRouter);
 
-// import { trackRouter } from "./routes/track-activity.js";
-// app.use("/userActivityRecords", trackRouter);
+import { trackRouter } from "./routes/track-activity.js";
+app.use("/userActivityRecords", trackRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

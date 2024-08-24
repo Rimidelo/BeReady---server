@@ -2,13 +2,13 @@ import { dbConnection } from "../db_connection.js";
 import { formatActivity } from "../utils/formatters.js";
 
 export const getAllActivities = async (req, res) => {
-    const connection = await dbConnection.createConnection();
-    const [rows] = await connection.execute(`
+  const connection = await dbConnection.createConnection();
+  const [rows] = await connection.execute(`
         SELECT
             a.*,
              DATE_FORMAT(s.ScheduleDate, '%d/%m/%Y') AS ScheduleDate,
-            TIME_FORMAT(s.StartTime, '%H:%i') AS StartTime,  -- Format without seconds
-            TIME_FORMAT(s.EndTime, '%H:%i') AS EndTime,      -- Format without seconds
+            TIME_FORMAT(s.StartTime, '%H:%i') AS StartTime,
+            TIME_FORMAT(s.EndTime, '%H:%i') AS EndTime,
             s.ParticipantsActual AS ParticipantsActual,
             s.ParticipantsMax AS ParticipantsMax,
             s.ScheduleDay AS ScheduleDay,
@@ -16,11 +16,10 @@ export const getAllActivities = async (req, res) => {
         FROM tbl_110_Activities a
         LEFT JOIN tbl_110_ScheduledActivities s ON a.ActivityID = s.ActivityID
     `);
-    await connection.end();
+  await connection.end();
 
-    res.json({ activities: rows.map(formatActivity) });
+  res.json({ activities: rows.map(formatActivity) });
 };
-
 
 export const getActivitiesByInstitute = async (req, res) => {
     const { instituteID } = req.params;
@@ -85,7 +84,7 @@ export const createActivity = async (req, res) => {
     } = req.body;
     const connection = await dbConnection.createConnection();
     await connection.execute(
-        "INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        `INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit]
     );
     await connection.end();
