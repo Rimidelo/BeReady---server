@@ -27,25 +27,37 @@ export const getPlan = async (req, res) => {
      where uj.UserID = ${userID};`
   );
   const [userActivities] = await connection.execute(
-    `select 
-        a.ActivityID as id,
-        a.Name as name,
-        a.Type as type,
-        a.TargetValue as targetValue, 
-     from tbl_110_UserActivities as ua
-     inner join tbl_110_Activities as a 
-     on ua.ActivityID = a.ActivityID
-     where ua.UserID = ${userID};`
+    `SELECT 
+        a.ActivityID AS id,
+        a.Name AS name,
+        a.Type AS type,
+        a.TargetValue AS targetValue,
+        (
+          SELECT uar.Records
+          FROM tbl_110_UserActivityRecords uar
+          WHERE uar.UserID = ${userID} AND uar.ActivityID = a.ActivityID
+          ORDER BY uar.recordDate DESC LIMIT 1
+        ) AS lastRecord
+      FROM tbl_110_UserActivities ua
+      INNER JOIN tbl_110_Activities a 
+      ON ua.ActivityID = a.ActivityID
+      WHERE ua.UserID = ${userID};`
   );
   connection.end();
   const jobs = userJobs.map((job) => ({
     ...job,
     activities: userActivities
       .filter((activity) => job.Characteristics.includes(activity.type))
-      .map(async (activity) => ({
-        ...activity,
-        progress: await getProgress(userID, activity.id, targetValue),
-      })),
+      .map((activity) => {
+        let progress =
+          activity.targetValue -
+          Math.abs(activity.targetValue - activity.lastRecord);
+        progress = progress < 0 ? 0 : (progress / activity.targetValue) * 100;
+        return {
+          ...activity,
+          progress,
+        };
+      }),
   }));
   res.json({ jobs });
 };
