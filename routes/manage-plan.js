@@ -7,8 +7,8 @@ import {
 
 const plansRouter = new Router();
 
-plansRouter.get("getPlan/:userid", getPlan);
-plansRouter.post("setPlan/:userid", setPlan);
-plansRouter.get("getUserActivity/:userid", getUserActivity);
+plansRouter.get("/getPlan/:userID", getPlan);
+plansRouter.post("/setPlan/:userID", setPlan);
+plansRouter.get("/getUserActivity/:userID", getUserActivity);
 
 export { plansRouter };

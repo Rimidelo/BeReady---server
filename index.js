@@ -10,7 +10,6 @@ app.use(urlencoded({ extended: true }));
 
 app.use(cors());
 
-
 app.get("/", (req, res) => {
   res.send("This is BeReady App");
 });
@@ -24,7 +23,10 @@ import { profileRouter } from "./routes/profile.js";
 app.use("/profile", profileRouter);
 
 import { plansRouter } from "./routes/manage-plan.js";
-app.use("/plan", plansRouter);
+app.use("/managePlan", plansRouter);
+
+import { trackRouter } from "./routes/track-activity.js";
+app.use("/userActivityRecords", trackRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
