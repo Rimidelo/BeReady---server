@@ -10,6 +10,8 @@ app.use(urlencoded({ extended: true }));
 
 app.use(cors());
 
+app.use('/assets', express.static('assets'));
+
 app.get("/", (req, res) => {
   res.send("This is BeReady App");
 });

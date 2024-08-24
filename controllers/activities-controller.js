@@ -115,16 +115,16 @@ export const editActivity = async (req, res) => {
 };
 
 export const deleteActivity = async (req, res) => {
-    const { id } = req.params;
-    console.log(`Received request to delete activity with ID: ${id}`);
-    if (!id || isNaN(id)) {
+    const { ActivityID } = req.params;
+    console.log(`Received request to delete activity with ID: ${ActivityID}`);
+    if (!id || isNaN(ActivityID)) {
         return res.status(400).json({ error: "Invalid activity ID" });
     }
     try {
         const connection = await dbConnection.createConnection();
         const [result] = await connection.execute(
             `DELETE FROM tbl_110_Activities WHERE ActivityID = ?`,
-            [id]
+            [ActivityID]
         );
         await connection.end();
 
