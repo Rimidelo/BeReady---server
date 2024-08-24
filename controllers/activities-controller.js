@@ -4,23 +4,23 @@ import { formatActivity } from "../utils/activity-format.js";
 export const getAllActivities = async (req, res) => {
     const connection = await dbConnection.createConnection();
     const [rows] = await connection.execute(`
-        SELECT
-            a.*,
-             DATE_FORMAT(s.ScheduleDate, '%d/%m/%Y') AS ScheduleDate,
-            TIME_FORMAT(s.StartTime, '%H:%i') AS StartTime,  -- Format without seconds
-            TIME_FORMAT(s.EndTime, '%H:%i') AS EndTime,      -- Format without seconds
-            s.ParticipantsActual AS ParticipantsActual,
-            s.ParticipantsMax AS ParticipantsMax,
-            s.ScheduleDay AS ScheduleDay,
-            s.RepeatFrequency AS RepeatFrequency
-        FROM tbl_110_Activities a
-        LEFT JOIN tbl_110_ScheduledActivities s ON a.ActivityID = s.ActivityID
+      SELECT
+        a.*,
+        DATE_FORMAT(s.ScheduleDate, '%d/%m/%Y') AS ScheduleDate,
+        TIME_FORMAT(s.StartTime, '%H:%i') AS StartTime,
+        TIME_FORMAT(s.EndTime, '%H:%i') AS EndTime,
+        s.ParticipantsActual AS ParticipantsActual,
+        s.ParticipantsMax AS ParticipantsMax,
+        s.ScheduleDay AS ScheduleDay,
+        s.RepeatFrequency AS RepeatFrequency
+      FROM tbl_110_Activities a
+      LEFT JOIN tbl_110_ScheduledActivities s ON a.ActivityID = s.ActivityID
     `);
     await connection.end();
-
     const formattedRows = rows.map(formatActivity);
-    res.json(formattedRows);
+    res.json({ activities: formattedRows });
 };
+
 
 export const getActivitiesByInstitute = async (req, res) => {
     const { instituteId } = req.params;
@@ -53,8 +53,8 @@ export const getActivity = async (req, res) => {
         SELECT
              a.*,
              DATE_FORMAT(s.ScheduleDate, '%d/%m/%Y') AS ScheduleDate,
-            TIME_FORMAT(s.StartTime, '%H:%i') AS StartTime,  -- Format without seconds
-            TIME_FORMAT(s.EndTime, '%H:%i') AS EndTime,      -- Format without seconds
+            TIME_FORMAT(s.StartTime, '%H:%i') AS StartTime,
+            TIME_FORMAT(s.EndTime, '%H:%i') AS EndTime,
             s.ParticipantsActual AS ParticipantsActual,
             s.ParticipantsMax AS ParticipantsMax,
             s.ScheduleDay AS ScheduleDay,
@@ -80,14 +80,14 @@ export const createActivity = async (req, res) => {
         Type,
         Name,
         FrameworkType,
-        CompanyID,
+        InstituteID,
         TargetValue,
         TargetUnit,
     } = req.body;
     const connection = await dbConnection.createConnection();
     await connection.execute(
         "INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [ActivityID, Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit]
+        [ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit]
     );
     await connection.end();
     res.status(201).json({ message: "Activity created" });

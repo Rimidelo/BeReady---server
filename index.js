@@ -15,6 +15,8 @@ app.get("/", (req, res) => {
   res.send("This is BeReady App");
 });
 
+app.use('/assets', express.static('assets'));
+
 import { activitiesRouter } from "./routes/manage-activities.js";
 app.use("/activities", activitiesRouter);
 
