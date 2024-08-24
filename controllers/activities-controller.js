@@ -2,8 +2,8 @@ import { dbConnection } from "../db_connection.js";
 import { formatActivity } from "../utils/formatters.js";
 
 export const getAllActivities = async (req, res) => {
-  const connection = await dbConnection.createConnection();
-  const [rows] = await connection.execute(`
+    const connection = await dbConnection.createConnection();
+    const [rows] = await connection.execute(`
         SELECT
             a.*,
              DATE_FORMAT(s.ScheduleDate, '%d/%m/%Y') AS ScheduleDate,
@@ -16,9 +16,9 @@ export const getAllActivities = async (req, res) => {
         FROM tbl_110_Activities a
         LEFT JOIN tbl_110_ScheduledActivities s ON a.ActivityID = s.ActivityID
     `);
-  await connection.end();
+    await connection.end();
 
-  res.json({ activities: rows.map(formatActivity) });
+    res.json({ activities: rows.map(formatActivity) });
 };
 
 export const getActivitiesByInstitute = async (req, res) => {
@@ -74,50 +74,94 @@ export const getActivity = async (req, res) => {
 
 export const createActivity = async (req, res) => {
     const {
-        ActivityID,
         Type,
         Name,
         FrameworkType,
         InstituteID,
         TargetValue,
-        TargetUnit,
+        TargetUnit
     } = req.body;
-    const connection = await dbConnection.createConnection();
-    await connection.execute(
-        `INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit]
-    );
-    await connection.end();
 
-    res.status(201).json({ message: "Activity created" });
+    const connection = await dbConnection.createConnection();
+    const [rows] = await connection.execute(`
+        SELECT MAX(CAST(ActivityID AS UNSIGNED)) AS maxActivityID 
+        FROM tbl_110_Activities
+      `);
+    const newActivityId = (rows[0].maxActivityID + 1).toString();
+    await connection.execute(
+        "INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [newActivityId, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit]
+    );
+
+    await connection.end();
+    res.status(201).json({ message: "Activity created", newActivityId });
 };
+
 
 
 export const editActivity = async (req, res) => {
     const { activityID } = req.params;
-    const { Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit } =
-        req.body;
-    const connection = await dbConnection.createConnection();
-    await connection.execute(
-        `UPDATE tbl_110_Activities
-     SET
-        Type = ?,
-        Name = ?,
-        FrameworkType = ?,
-        CompanyID = ?,
-        TargetValue = ?,
-        TargetUnit = ?
-     WHERE ActivityID = ?`,
-        [Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit, activityID]
-    );
-    await connection.end();
-    res.json({ message: "Activity updated" });
+    if (!activityID) {
+        return res.status(400).json({ error: "Activity ID is missing." });
+    }
+    let query = "UPDATE tbl_110_Activities SET ";
+    const queryValues = [];
+    const { Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit } = req.body;
+    if (Type) {
+        query += "Type = ?, ";
+        queryValues.push(Type);
+    }
+    if (Name) {
+        query += "Name = ?, ";
+        queryValues.push(Name);
+    }
+    if (FrameworkType) {
+        query += "FrameworkType = ?, ";
+        queryValues.push(FrameworkType);
+    }
+    if (InstituteID) {
+        query += "InstituteID = ?, ";
+        queryValues.push(InstituteID);
+    }
+    if (TargetValue) {
+        query += "TargetValue = ?, ";
+        queryValues.push(TargetValue);
+    }
+    if (TargetUnit) {
+        query += "TargetUnit = ?, ";
+        queryValues.push(TargetUnit);
+    }
+
+    query = query.slice(0, -2) + " WHERE ActivityID = ?";
+    queryValues.push(activityID);
+    console.log("Executing query:", query);
+    console.log("With values:", queryValues);
+    try {
+        const connection = await dbConnection.createConnection();
+        const [result] = await connection.execute(query, queryValues);
+        await connection.end();
+
+        console.log("Result from SQL execution:", result);
+
+        if (result.affectedRows > 0) {
+            res.json({ message: "Activity updated successfully." });
+        } else {
+            res.status(404).json({ message: "Activity not found." });
+        }
+    } catch (error) {
+        console.error("Error updating activity:", error);
+        res.status(500).json({ error: "Failed to update activity." });
+    }
 };
+
+
+
 
 export const deleteActivity = async (req, res) => {
     const { ActivityID } = req.params;
     console.log(`Received request to delete activity with ID: ${ActivityID}`);
-    if (!id || isNaN(ActivityID)) {
+
+    if (!ActivityID || isNaN(Number(ActivityID))) {
         return res.status(400).json({ error: "Invalid activity ID" });
     }
     try {
@@ -138,8 +182,6 @@ export const deleteActivity = async (req, res) => {
         res.status(500).json({ error: "Failed to delete activity" });
     }
 };
-
-
 
 
 export const scheduleActivity = async (req, res) => {
