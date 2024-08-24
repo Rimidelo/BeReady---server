@@ -1,15 +1,21 @@
 import { dbConnection } from "../db_connection.js";
 
 export const getProfile = async (req, res) => {
-  const { userId } = req.params;
+  const { email, password } = req.body;
   const connection = await dbConnection.createConnection();
   const [userProfile] = await connection.execute(
-    `select * from tbl_110_User
-     where UserID = ${userId};`
+    `SELECT * FROM tbl_110_User WHERE Email = ? AND Password = ?`,
+    [email, password]
   );
   connection.end();
-  res.json(userProfile);
+  if (userProfile.length > 0) {
+    res.json(userProfile[0]);
+  } else {
+    res.status(401).json({ message: "Invalid email or password" });
+  }
 };
+
+
 
 export const getProfileStatus = async (req, res) => {
   const { userId } = req.params;
