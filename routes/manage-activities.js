@@ -13,10 +13,10 @@ const activitiesRouter = new Router();
 
 activitiesRouter.get('/getAllActivities/', getAllActivities);
 activitiesRouter.get('/getActivitiesByInstitute/:instituteID', getActivitiesByInstitute);
-activitiesRouter.get('/getActivity/:activityID', getActivity);
+activitiesRouter.get('/getActivity/:id', getActivity);
 activitiesRouter.post('/createActivity/', createActivity);
-activitiesRouter.put('/editActivity/:activityID', editActivity);
-activitiesRouter.delete('//deleteActivity/:activityID', deleteActivity);
-activitiesRouter.post('/scheduleActivity/:activityID', scheduleActivity);
+activitiesRouter.put('/editActivity/:id', editActivity);
+activitiesRouter.delete('/deleteActivity/:id', deleteActivity);
+activitiesRouter.post('/scheduleActivity/:id', scheduleActivity);
 
 export { activitiesRouter };

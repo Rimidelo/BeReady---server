@@ -23,9 +23,9 @@ export const getAllActivities = async (req, res) => {
 
 
 export const getActivitiesByInstitute = async (req, res) => {
-  const { instituteID } = req.params;
-  const connection = await dbConnection.createConnection();
-  const [rows] = await connection.execute(`
+    const { instituteID } = req.params;
+    const connection = await dbConnection.createConnection();
+    const [rows] = await connection.execute(`
         SELECT
              a.*,
              DATE_FORMAT(s.ScheduleDate, '%d/%m/%Y') AS ScheduleDate,
@@ -39,16 +39,16 @@ export const getActivitiesByInstitute = async (req, res) => {
         LEFT JOIN tbl_110_ScheduledActivities s ON a.ActivityID = s.ActivityID
         WHERE a.InstituteID = ${instituteID}
     `);
-  await connection.end();
+    await connection.end();
 
-  res.json({ activities: rows.map(formatActivity) });
+    res.json({ activities: rows.map(formatActivity) });
 };
 
 export const getActivity = async (req, res) => {
-  const { activityID } = req.params;
-  const connection = await dbConnection.createConnection();
-  const [rows] = await connection.execute(
-    `
+    const { activityID } = req.params;
+    const connection = await dbConnection.createConnection();
+    const [rows] = await connection.execute(
+        `
         SELECT
              a.*,
              DATE_FORMAT(s.ScheduleDate, '%d/%m/%Y') AS ScheduleDate,
@@ -62,15 +62,15 @@ export const getActivity = async (req, res) => {
         LEFT JOIN tbl_110_ScheduledActivities s ON a.ActivityID = s.ActivityID
         WHERE a.ActivityID = ?
     `,
-    [activityID]
-  );
-  await connection.end();
+        [activityID]
+    );
+    await connection.end();
 
-  if (rows.length === 0) {
-    res.status(404).json({ message: "Activity not found" });
-  } else {
-    res.json(formatActivity(rows[0]));
-  }
+    if (rows.length === 0) {
+        res.status(404).json({ message: "Activity not found" });
+    } else {
+        res.json(formatActivity(rows[0]));
+    }
 };
 
 export const createActivity = async (req, res) => {
@@ -79,60 +79,79 @@ export const createActivity = async (req, res) => {
         Type,
         Name,
         FrameworkType,
-        CompanyID,
+        InstituteID,
         TargetValue,
         TargetUnit,
     } = req.body;
     const connection = await dbConnection.createConnection();
     await connection.execute(
-        "INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [ActivityID, Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit]
+        "INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit]
     );
     await connection.end();
+
     res.status(201).json({ message: "Activity created" });
 };
 
+
 export const editActivity = async (req, res) => {
-  const { activityID } = req.params;
-  const { Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit } =
-    req.body;
-  const connection = await dbConnection.createConnection();
-  await connection.execute(
-    `UPDATE tbl_110_Activities 
-     SET 
-        Type = ?, 
-        Name = ?, 
-        FrameworkType = ?, 
-        CompanyID = ?, 
-        TargetValue = ?, 
-        TargetUnit = ? 
+    const { activityID } = req.params;
+    const { Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit } =
+        req.body;
+    const connection = await dbConnection.createConnection();
+    await connection.execute(
+        `UPDATE tbl_110_Activities
+     SET
+        Type = ?,
+        Name = ?,
+        FrameworkType = ?,
+        CompanyID = ?,
+        TargetValue = ?,
+        TargetUnit = ?
      WHERE ActivityID = ?`,
-    [Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit, activityID]
-  );
-  await connection.end();
-  res.json({ message: "Activity updated" });
+        [Type, Name, FrameworkType, CompanyID, TargetValue, TargetUnit, activityID]
+    );
+    await connection.end();
+    res.json({ message: "Activity updated" });
 };
 
 export const deleteActivity = async (req, res) => {
-  const { activityID } = req.params;
-  const connection = await dbConnection.createConnection();
-  await connection.execute(
-    `DELETE FROM tbl_110_Activities WHERE ActivityID = ?`,
-    [activityID]
-  );
-  await connection.end();
-  res.json({ message: "Activity deleted" });
+    const { id } = req.params;
+    console.log(`Received request to delete activity with ID: ${id}`);
+    if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid activity ID" });
+    }
+    try {
+        const connection = await dbConnection.createConnection();
+        const [result] = await connection.execute(
+            `DELETE FROM tbl_110_Activities WHERE ActivityID = ?`,
+            [id]
+        );
+        await connection.end();
+
+        if (result.affectedRows > 0) {
+            res.json({ message: "Activity deleted successfully" });
+        } else {
+            res.status(404).json({ message: "Activity not found" });
+        }
+    } catch (error) {
+        console.error("Error deleting activity:", error);
+        res.status(500).json({ error: "Failed to delete activity" });
+    }
 };
 
+
+
+
 export const scheduleActivity = async (req, res) => {
-  const { activityID } = req.params;
-  const { ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency } =
-    req.body;
-  const connection = await dbConnection.createConnection();
-  await connection.execute(
-    `INSERT INTO tbl_110_ScheduledActivities (ScheduledActivityID, ActivityID, ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency) VALUES (?, ?, ?, ?, ?, ?)`,
-    [activityID, activityID, ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency]
-  );
-  await connection.end();
-  res.status(201).json({ message: "Activity scheduled" });
+    const { activityID } = req.params;
+    const { ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency } =
+        req.body;
+    const connection = await dbConnection.createConnection();
+    await connection.execute(
+        `INSERT INTO tbl_110_ScheduledActivities (ScheduledActivityID, ActivityID, ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency) VALUES (?, ?, ?, ?, ?, ?)`,
+        [activityID, activityID, ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency]
+    );
+    await connection.end();
+    res.status(201).json({ message: "Activity scheduled" });
 };
