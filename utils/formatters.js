@@ -2,6 +2,7 @@ export const formatActivity = (row) => ({
   id: row.ActivityID,
   type: row.Type,
   name: row.Name,
+  description: row.Description,
   frameworkType: row.FrameworkType,
   instituteID: row.InstituteID,
   target: {
