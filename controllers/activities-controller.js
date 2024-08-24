@@ -18,8 +18,7 @@ export const getAllActivities = async (req, res) => {
     `);
     await connection.end();
 
-    const formattedRows = rows.map(formatActivity);
-    res.json(formattedRows);
+    res.json({ activities: rows.map(formatActivity) });
 };
 
 

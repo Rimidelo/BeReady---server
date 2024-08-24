@@ -11,12 +11,12 @@ import {
 
 const activitiesRouter = new Router();
 
-activitiesRouter.get('//getAllActivities/', getAllActivities);
+activitiesRouter.get('/getAllActivities/', getAllActivities);
 activitiesRouter.get('/getActivitiesByInstitute/:instituteID', getActivitiesByInstitute);
-activitiesRouter.get('//getActivity/:activityID', getActivity);
-activitiesRouter.post('//createActivity/', createActivity);
-activitiesRouter.put('//editActivity/:activityID', editActivity);
+activitiesRouter.get('/getActivity/:activityID', getActivity);
+activitiesRouter.post('/createActivity/', createActivity);
+activitiesRouter.put('/editActivity/:activityID', editActivity);
 activitiesRouter.delete('//deleteActivity/:activityID', deleteActivity);
-activitiesRouter.post('//scheduleActivity/:activityID', scheduleActivity);
+activitiesRouter.post('/scheduleActivity/:activityID', scheduleActivity);
 
 export { activitiesRouter };
