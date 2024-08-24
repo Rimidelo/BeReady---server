@@ -1,3 +1,4 @@
+import cors from "cors";
 import { config } from "dotenv";
 import express, { json, urlencoded } from "express";
 config();
@@ -7,16 +8,8 @@ const port = process.env.PORT || 8081;
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.set("Content-Type", "application/json");
-  next();
-});
+app.use(cors());
+
 
 app.get("/", (req, res) => {
   res.send("This is BeReady App");
