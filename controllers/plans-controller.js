@@ -65,17 +65,27 @@ export const getUserActivity = async (req, res) => {
   });
 };
 
-export const addRecord = (req, res) => {
-  //TODO
-  console.log(req);
+export const setRecord = async (req, res) => {
+  const { userId, activityId, recordDate, result, feedback } = req.params;
+  const connection = await dbConnection.createConnection();
+  const [queryResult] = await connection.execute(
+    `INSERT INTO tbl_110_UserActivityRecords (UserID, ActivityID, recordDate, RECORDS, Description)
+     VALUES (${userId}, ${activityId}, ${recordDate}, ${result}, ${feedback})
+     ON DUPLICATE KEY UPDATE 
+     RECORDS = VALUES(RECORDS), 
+     Description = VALUES(Description)`
+  );
+  connection.end();
+  res.status(200);
 };
 
-export const setRecord = (req, res) => {
-  //TODO
-  console.log(req);
-};
-
-export const deleteRecord = (req, res) => {
-  //TODO
-  console.log(req);
+export const deleteRecord = async (req, res) => {
+  const { userId, activityId, recordDate } = req.params;
+  const connection = await dbConnection.createConnection();
+  const [queryResult] = await connection.execute(
+    `DELETE from tbl_110_UserActivityRecords
+     where UserID=${userId} and ActivityID=${activityId} and recordDate=${recordDate}`
+  );
+  connection.end();
+  res.status(200);
 };
