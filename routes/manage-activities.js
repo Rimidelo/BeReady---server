@@ -5,12 +5,14 @@ import {
     createActivity,
     editActivity,
     deleteActivity,
-    scheduleActivity
+    scheduleActivity,
+    getActivitiesByInstitute
 } from '../controllers/activities-controller.js';
 
 const activitiesRouter = new Router();
 
 activitiesRouter.get('getAllActivities/', getAllActivities);
+activitiesRouter.get('getActivitiesByInstitute/:instituteId', getActivitiesByInstitute);
 activitiesRouter.get('getActivity/:id', getActivity);
 activitiesRouter.post('createActivity/', createActivity);
 activitiesRouter.put('editActivity/:id', editActivity);
