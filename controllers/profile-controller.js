@@ -125,7 +125,7 @@ export const setFirstOrderDetails = async (req, res) => {
   );
   connection.end();
   let isSuitabilityChanged;
-  isSuitabilityChanged = await assessSuitability(userID, firstOrderDetails);
+  isSuitabilityChanged = await assessSuitability(userID, req.body);
   console.log(isSuitabilityChanged);
   res.status(200).json(`{ isSuitabilityChanged: ${isSuitabilityChanged} }`);
 };
