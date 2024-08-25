@@ -46,7 +46,7 @@ export const getFirstOrderDetails = async (req, res) => {
     `select * from tbl_110_CFMS_First_Order where UserID=${userID}`
   );
   connection.end();
-  res.json(firstOrderDetails);
+  res.json(firstOrderDetails[0]);
 };
 
 const handleNotSuitableJob = async (jobId) => {
@@ -59,7 +59,7 @@ const handleNotSuitableJob = async (jobId) => {
 };
 
 const assessSuitability = async (userID, firstOrderDetails) => {
-  const isSuitabilityChanged = false;
+  let isSuitabilityChanged = false;
   const connection = await dbConnection.createConnection();
   const [userJobs] = await connection.execute(
     `select jr.* from tbl_110_UserJobs as uj
@@ -82,7 +82,6 @@ const assessSuitability = async (userID, firstOrderDetails) => {
 
 export const setFirstOrderDetails = async (req, res) => {
   const {
-    userID,
     IPR,
     adaptionDiff,
     command,
@@ -98,14 +97,16 @@ export const setFirstOrderDetails = async (req, res) => {
     sustainAttention,
     teamwork,
     technicalAct,
-  } = req.params;
+  } = req.body;
+  const { userID } = req.params;
   const connection = await dbConnection.createConnection();
+
   const [firstOrderDetails] = await connection.execute(
-    `INSERT INTO tbl_110_CFMS_First_Order 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-     ON DUPLICATE KEY UPDATE UserID = ${userID}`,
+    `REPLACE INTO tbl_110_CFMS_First_Order
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
     [
       userID,
+      medicalProfile,
       IPR,
       adaptionDiff,
       command,
@@ -116,7 +117,6 @@ export const setFirstOrderDetails = async (req, res) => {
       instruction,
       investAndPersist,
       manageAndOrg,
-      medicalProfile,
       spatialPer,
       sustainAttention,
       teamwork,
@@ -124,6 +124,8 @@ export const setFirstOrderDetails = async (req, res) => {
     ]
   );
   connection.end();
-  const isSuitabilityChanged = assessSuitability(userID, firstOrderDetails);
+  let isSuitabilityChanged;
+  isSuitabilityChanged = await assessSuitability(userID, firstOrderDetails);
+  console.log(isSuitabilityChanged);
   res.status(200).json(`{ isSuitabilityChanged: ${isSuitabilityChanged} }`);
 };

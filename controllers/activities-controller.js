@@ -139,15 +139,10 @@ export const editActivity = async (req, res) => {
 
     query = query.slice(0, -2) + " WHERE ActivityID = ?";
     queryValues.push(activityID);
-    console.log("Executing query:", query);
-    console.log("With values:", queryValues);
     try {
         const connection = await dbConnection.createConnection();
         const [result] = await connection.execute(query, queryValues);
         await connection.end();
-
-        console.log("Result from SQL execution:", result);
-
         if (result.affectedRows > 0) {
             res.json({ message: "Activity updated successfully." });
         } else {
@@ -165,8 +160,6 @@ export const editActivity = async (req, res) => {
 
 export const deleteActivity = async (req, res) => {
     const { ActivityID } = req.params;
-    console.log(`Received request to delete activity with ID: ${ActivityID}`);
-
     if (!ActivityID || isNaN(Number(ActivityID))) {
         return res.status(400).json({ error: "Invalid activity ID" });
     }
