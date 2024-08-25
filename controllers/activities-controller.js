@@ -79,18 +79,19 @@ export const createActivity = async (req, res) => {
         FrameworkType,
         InstituteID,
         TargetValue,
-        TargetUnit
+        TargetUnit,
+        Description
     } = req.body;
 
     const connection = await dbConnection.createConnection();
     const [rows] = await connection.execute(`
-        SELECT MAX(CAST(ActivityID AS UNSIGNED)) AS maxActivityID 
+        SELECT MAX(CAST(ActivityID AS UNSIGNED)) AS maxActivityID
         FROM tbl_110_Activities
       `);
     const newActivityId = (rows[0].maxActivityID + 1).toString();
     await connection.execute(
-        "INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [newActivityId, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit]
+        "INSERT INTO tbl_110_Activities (ActivityID, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit, Description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [newActivityId, Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit, Description]
     );
 
     await connection.end();
@@ -106,7 +107,7 @@ export const editActivity = async (req, res) => {
     }
     let query = "UPDATE tbl_110_Activities SET ";
     const queryValues = [];
-    const { Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit } = req.body;
+    const { Type, Name, FrameworkType, InstituteID, TargetValue, TargetUnit, Description } = req.body;  /* Add Description */
     if (Type) {
         query += "Type = ?, ";
         queryValues.push(Type);
@@ -131,6 +132,10 @@ export const editActivity = async (req, res) => {
         query += "TargetUnit = ?, ";
         queryValues.push(TargetUnit);
     }
+    if (Description) {
+        query += "Description = ?, ";
+        queryValues.push(Description);
+    }
 
     query = query.slice(0, -2) + " WHERE ActivityID = ?";
     queryValues.push(activityID);
@@ -153,6 +158,7 @@ export const editActivity = async (req, res) => {
         res.status(500).json({ error: "Failed to update activity." });
     }
 };
+
 
 
 
