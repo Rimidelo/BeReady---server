@@ -1,18 +1,5 @@
 import { dbConnection } from "../db_connection.js";
 
-const getProgress = async (userID, activityID, targetValue) => {
-  const connection = await dbConnection.createConnection();
-  const [last] = await connection.execute(
-    `select Records as record
-     from tbl_110_UserActivityRecords
-     where UserID=${userID} and ActivityID=${activityID}
-     ORDER BY recordDate DESC
-     limit 1;`
-  );
-  connection.end();
-  return (targetValue - Math.abs(targetValue - last.record)) / targetValue;
-};
-
 export const getPlan = async (req, res) => {
   const { userID } = req.params;
   const connection = await dbConnection.createConnection();
@@ -53,6 +40,7 @@ export const getPlan = async (req, res) => {
           activity.targetValue -
           Math.abs(activity.targetValue - activity.lastRecord);
         progress = progress < 0 ? 0 : (progress / activity.targetValue) * 100;
+        progress = Math.round(progress);
         return {
           ...activity,
           progress,
