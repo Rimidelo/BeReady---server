@@ -15,30 +15,6 @@ export const getProfile = async (req, res) => {
   }
 };
 
-export const getProfileStatus = async (req, res) => {
-  const { userID } = req.params;
-  const connection = await dbConnection.createConnection();
-  const [isUserExist] = await connection.execute(
-    `select 1 from tbl_110_User where UserID=${userID}`
-  );
-  const [hasPreferences] = await connection.execute(
-    `select 1 from tbl_110_CFMS_Preferences where UserID=${userID}`
-  );
-  const [hasFirstOrderDetails] = await connection.execute(
-    `select 1 from tbl_110_CFMS_First_Order where UserID=${userID}`
-  );
-  connection.end();
-  res.json({
-    personalDetails: isUserExist,
-    preferences: hasPreferences,
-    firstOrderDetails: hasFirstOrderDetails,
-  });
-};
-
-export const getProfileImage = (req, res) => {
-  console.log(req);
-};
-
 export const getFirstOrderDetails = async (req, res) => {
   const { userID } = req.params;
   const connection = await dbConnection.createConnection();
@@ -127,5 +103,6 @@ export const setFirstOrderDetails = async (req, res) => {
   let isSuitabilityChanged;
   isSuitabilityChanged = await assessSuitability(userID, req.body);
   console.log(isSuitabilityChanged);
-  res.status(200).json(`{ isSuitabilityChanged: ${isSuitabilityChanged} }`);
+  res.status(200).json({ isSuitabilityChanged });
+
 };

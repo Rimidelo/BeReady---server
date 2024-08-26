@@ -4,7 +4,7 @@ export const getPlan = async (req, res) => {
   const { userID } = req.params;
   const connection = await dbConnection.createConnection();
   const [userJobs] = await connection.execute(
-    `select 
+    `select
         j.JobID as id,
         j.JobTitle as title,
         j.Characteristics
@@ -14,7 +14,7 @@ export const getPlan = async (req, res) => {
      where uj.UserID = ${userID};`
   );
   const [userActivities] = await connection.execute(
-    `SELECT 
+    `SELECT
         a.ActivityID AS id,
         a.Name AS name,
         a.Type AS type,
@@ -26,7 +26,7 @@ export const getPlan = async (req, res) => {
           ORDER BY uar.recordDate DESC LIMIT 1
         ) AS lastRecord
       FROM tbl_110_UserActivities ua
-      INNER JOIN tbl_110_Activities a 
+      INNER JOIN tbl_110_Activities a
       ON ua.ActivityID = a.ActivityID
       WHERE ua.UserID = ${userID};`
   );
@@ -63,7 +63,7 @@ export const getUserActivity = async (req, res) => {
      where ActivityID = ${activityID};`
   );
   const [userRecords] = await connection.execute(
-    `select 
+    `select
         DATE_FORMAT(recordDate, '%d/%m/%Y') as date,
         Records as result
      from tbl_110_UserActivityRecords
@@ -83,8 +83,8 @@ export const setRecord = async (req, res) => {
   const [queryResult] = await connection.execute(
     `INSERT INTO tbl_110_UserActivityRecords (UserID, ActivityID, recordDate, RECORDS, Description)
      VALUES (${userId}, ${activityId}, ${recordDate}, ${result}, ${feedback})
-     ON DUPLICATE KEY UPDATE 
-     RECORDS = VALUES(RECORDS), 
+     ON DUPLICATE KEY UPDATE
+     RECORDS = VALUES(RECORDS),
      Description = VALUES(Description)`
   );
   connection.end();
@@ -101,3 +101,69 @@ export const deleteRecord = async (req, res) => {
   connection.end();
   res.status(200);
 };
+
+export const getAllActivities = async (req, res) => {
+  const connection = await dbConnection.createConnection();
+  const [activities] = await connection.execute(
+    `SELECT
+        ActivityID as id,
+        Name as name,
+        Type as type,
+        TargetValue as targetValue
+     FROM tbl_110_Activities;`
+  );
+
+  connection.end();
+
+  res.json({ activities });
+};
+
+export const getUserActivities = async (req, res) => {
+  const { userID } = req.params;
+  const connection = await dbConnection.createConnection();
+  try {
+    const [userActivities] = await connection.execute(
+      `SELECT ActivityID FROM tbl_110_UserActivities WHERE UserID = ?`, [userID]
+    );
+    if (userActivities.length === 0) {
+      console.log(`No activities found for userID: ${userID}`);
+    }
+    res.json({ activities: userActivities });
+  } catch (error) {
+    console.error("Error fetching user activities:", error);
+    res.status(500).json({ error: "Failed to fetch user activities" });
+  } finally {
+    connection.end();
+  }
+};
+
+
+export const updateUserActivities = async (req, res) => {
+  const { userID } = req.params;
+  const { selectedActivities } = req.body;
+  const connection = await dbConnection.createConnection();
+  try {
+    await connection.beginTransaction();
+    await connection.execute(
+      `DELETE FROM tbl_110_UserActivities WHERE UserID = ?`, [userID]
+    );
+    for (const activityID of selectedActivities) {
+      await connection.execute(
+        `INSERT INTO tbl_110_UserActivities (UserID, ActivityID) VALUES (?, ?)`, [userID, activityID]
+      );
+    }
+    await connection.commit();
+
+    res.status(200).json({ message: "User activities updated successfully" });
+  } catch (error) {
+    await connection.rollback();
+    console.error("Error updating user activities:", error);
+    res.status(500).json({ error: "Failed to update user activities" });
+  } finally {
+    connection.end();
+  }
+};
+
+
+
+
