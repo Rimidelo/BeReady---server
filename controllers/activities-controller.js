@@ -184,14 +184,24 @@ export const deleteActivity = async (req, res) => {
 
 
 export const scheduleActivity = async (req, res) => {
+    const { participants, schedule, InstituteID } = req.body;
     const { activityID } = req.params;
-    const { ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency } =
-        req.body;
-    const connection = await dbConnection.createConnection();
-    await connection.execute(
-        `INSERT INTO tbl_110_ScheduledActivities (ScheduledActivityID, ActivityID, ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency) VALUES (?, ?, ?, ?, ?, ?)`,
-        [activityID, activityID, ScheduleDate, ScheduleDay, ScheduleHours, RepeatFrequency]
-    );
-    await connection.end();
-    res.status(201).json({ message: "Activity scheduled" });
+    const { maxAmount } = participants;
+    const { date, day, hours, repeat } = schedule;
+    const [startTime, endTime] = hours.split(" - ");
+    const formattedDate = date.split("/").reverse().join("-");
+    try {
+        const connection = await dbConnection.createConnection();
+        await connection.execute(
+            `INSERT INTO tbl_110_ScheduledActivities
+         (ActivityID, InstituteID, ParticipantsActual, ParticipantsMax, ScheduleDate, ScheduleDay, RepeatFrequency, StartTime, EndTime) 
+         VALUES (?, ?, 0, ?, ?, ?, ?, ?, ?)`,
+            [activityID, InstituteID || null, maxAmount, formattedDate, day, repeat, startTime, endTime]
+        );
+        await connection.end();
+        res.status(201).json({ message: "Activity scheduled successfully" });
+    } catch (error) {
+        console.error("Error scheduling activity:", error);
+        res.status(500).json({ error: "Failed to schedule activity" });
+    }
 };
