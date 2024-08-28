@@ -51,7 +51,8 @@ export const getPlan = async (req, res) => {
 };
 
 export const getUserActivity = async (req, res) => {
-  const { userID, activityID } = req.params;
+  const { userID } = req.params;
+  const { activityID } = req.query;
   const connection = await dbConnection.createConnection();
   const [activityDetails] = await connection.execute(
     `select
@@ -64,8 +65,9 @@ export const getUserActivity = async (req, res) => {
   );
   const [userRecords] = await connection.execute(
     `select
-        DATE_FORMAT(recordDate, '%d/%m/%Y') as date,
-        Records as result
+        DATE_FORMAT(recordDate, '%Y-%m-%d') as date,
+        Records as result,
+        Description as feedback
      from tbl_110_UserActivityRecords
      where UserID = ${userID} and ActivityID = ${activityID};`
   );
@@ -77,23 +79,23 @@ export const getUserActivity = async (req, res) => {
   });
 };
 
-export const setRecord = async (req, res) => {
-  const { userId, activityId, recordDate, result, feedback } = req.body;
+export const setRecord = async (req, res) => {  
+  const { userId, activityId, date, result, feedback } = req.body;
   const connection = await dbConnection.createConnection();
   const [queryResult] = await connection.execute(
     `REPLACE INTO tbl_110_UserActivityRecords
-     VALUES ('${userId}', '${activityId}', '${recordDate}', '${result}', '${feedback}');`
+     VALUES ('${userId}', '${activityId}', '${date}', '${result}', '${feedback}');`
   );
   connection.end();
   res.status(200);
 };
 
 export const deleteRecord = async (req, res) => {
-  const { userId, activityId, recordDate } = req.body;
+  const { userId, activityId, date } = req.body;
   const connection = await dbConnection.createConnection();
   const [queryResult] = await connection.execute(
     `DELETE from tbl_110_UserActivityRecords
-     where UserID=${userId} and ActivityID=${activityId} and recordDate=${recordDate}`
+     where UserID=${userId} and ActivityID=${activityId} and recordDate=${date}`
   );
   connection.end();
   res.status(200);
