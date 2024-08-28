@@ -16,6 +16,9 @@ app.get("/", (req, res) => {
   res.send("This is BeReady App");
 });
 
+import { weatherRouter } from "./routes/weather.js";
+app.use("/weather", weatherRouter);
+
 import { activitiesRouter } from "./routes/manage-activities.js";
 app.use("/activities", activitiesRouter);
 
