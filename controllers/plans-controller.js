@@ -58,6 +58,7 @@ export const getUserActivity = async (req, res) => {
     `select
         ActivityID as id,
         Name as name,
+        Description as description,
         TargetValue as targetValue,
         TargetUnit as targetUnit
      from tbl_110_Activities
