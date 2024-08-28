@@ -78,21 +78,18 @@ export const getUserActivity = async (req, res) => {
 };
 
 export const setRecord = async (req, res) => {
-  const { userId, activityId, recordDate, result, feedback } = req.params;
+  const { userId, activityId, recordDate, result, feedback } = req.body;
   const connection = await dbConnection.createConnection();
   const [queryResult] = await connection.execute(
-    `INSERT INTO tbl_110_UserActivityRecords (UserID, ActivityID, recordDate, RECORDS, Description)
-     VALUES (${userId}, ${activityId}, ${recordDate}, ${result}, ${feedback})
-     ON DUPLICATE KEY UPDATE
-     RECORDS = VALUES(RECORDS),
-     Description = VALUES(Description)`
+    `REPLACE INTO tbl_110_UserActivityRecords
+     VALUES ('${userId}', '${activityId}', '${recordDate}', '${result}', '${feedback}');`
   );
   connection.end();
   res.status(200);
 };
 
 export const deleteRecord = async (req, res) => {
-  const { userId, activityId, recordDate } = req.params;
+  const { userId, activityId, recordDate } = req.body;
   const connection = await dbConnection.createConnection();
   const [queryResult] = await connection.execute(
     `DELETE from tbl_110_UserActivityRecords
@@ -123,7 +120,8 @@ export const getUserActivities = async (req, res) => {
   const connection = await dbConnection.createConnection();
   try {
     const [userActivities] = await connection.execute(
-      `SELECT ActivityID FROM tbl_110_UserActivities WHERE UserID = ?`, [userID]
+      `SELECT ActivityID FROM tbl_110_UserActivities WHERE UserID = ?`,
+      [userID]
     );
     if (userActivities.length === 0) {
       console.log(`No activities found for userID: ${userID}`);
@@ -137,7 +135,6 @@ export const getUserActivities = async (req, res) => {
   }
 };
 
-
 export const updateUserActivities = async (req, res) => {
   const { userID } = req.params;
   const { selectedActivities } = req.body;
@@ -145,11 +142,13 @@ export const updateUserActivities = async (req, res) => {
   try {
     await connection.beginTransaction();
     await connection.execute(
-      `DELETE FROM tbl_110_UserActivities WHERE UserID = ?`, [userID]
+      `DELETE FROM tbl_110_UserActivities WHERE UserID = ?`,
+      [userID]
     );
     for (const activityID of selectedActivities) {
       await connection.execute(
-        `INSERT INTO tbl_110_UserActivities (UserID, ActivityID) VALUES (?, ?)`, [userID, activityID]
+        `INSERT INTO tbl_110_UserActivities (UserID, ActivityID) VALUES (?, ?)`,
+        [userID, activityID]
       );
     }
     await connection.commit();
@@ -163,7 +162,3 @@ export const updateUserActivities = async (req, res) => {
     connection.end();
   }
 };
-
-
-
-
