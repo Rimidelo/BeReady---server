@@ -91,12 +91,12 @@ export const setRecord = async (req, res) => {
   res.status(200);
 };
 
-export const deleteRecord = async (req, res) => {
+export const deleteRecord = async (req, res) => {  
   const { userId, activityId, date } = req.body;
   const connection = await dbConnection.createConnection();
   const [queryResult] = await connection.execute(
     `DELETE from tbl_110_UserActivityRecords
-     where UserID=${userId} and ActivityID=${activityId} and recordDate=${date}`
+     where UserID=${userId} and ActivityID=${activityId} and recordDate='${date}'`
   );
   connection.end();
   res.status(200);
