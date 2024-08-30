@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import {
     getAllActivities,
-    getActivity,
     createActivity,
     editActivity,
     deleteActivity,
@@ -13,7 +12,6 @@ const activitiesRouter = new Router();
 
 activitiesRouter.get('/getAllActivities/', getAllActivities);
 activitiesRouter.get('/getActivitiesByInstitute/:instituteID', getActivitiesByInstitute);
-activitiesRouter.get('/getActivity/:id', getActivity);
 activitiesRouter.post('/createActivity/', createActivity);
 activitiesRouter.put('/editActivity/:activityID', editActivity);
 activitiesRouter.delete('/deleteActivity/:ActivityID', deleteActivity);

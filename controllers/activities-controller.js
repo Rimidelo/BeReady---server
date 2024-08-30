@@ -43,35 +43,6 @@ export const getActivitiesByInstitute = async (req, res) => {
     res.json({ activities: rows.map(formatActivity) });
 };
 
-export const getActivity = async (req, res) => {
-    const { activityID } = req.params;
-    const connection = await dbConnection.createConnection();
-    const [rows] = await connection.execute(
-        `
-        SELECT
-             a.*,
-             DATE_FORMAT(s.ScheduleDate, '%d/%m/%Y') AS ScheduleDate,
-            TIME_FORMAT(s.StartTime, '%H:%i') AS StartTime,
-            TIME_FORMAT(s.EndTime, '%H:%i') AS EndTime,
-            s.ParticipantsActual AS ParticipantsActual,
-            s.ParticipantsMax AS ParticipantsMax,
-            s.ScheduleDay AS ScheduleDay,
-            s.RepeatFrequency AS RepeatFrequency
-        FROM tbl_110_Activities a
-        LEFT JOIN tbl_110_ScheduledActivities s ON a.ActivityID = s.ActivityID
-        WHERE a.ActivityID = ?
-    `,
-        [activityID]
-    );
-    await connection.end();
-
-    if (rows.length === 0) {
-        res.status(404).json({ message: "Activity not found" });
-    } else {
-        res.json(formatActivity(rows[0]));
-    }
-};
-
 export const createActivity = async (req, res) => {
     const {
         Type,
